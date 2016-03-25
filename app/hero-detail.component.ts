@@ -1,4 +1,4 @@
-import {Component} from 'angular2/core';
+import {Component, Input} from 'angular2/core';
 import {Hero} from './hero';
 
 @Component({
@@ -12,9 +12,8 @@ import {Hero} from './hero';
                 <input type="text" [(ngModel)]="hero.name" placeholder="name">
             </div>
         </div>
-  `,
-    inputs: ['hero']
+  `
 })
 export class HeroDetailComponent {
-    public hero:Hero;
+    @Input() hero:Hero;
 }
