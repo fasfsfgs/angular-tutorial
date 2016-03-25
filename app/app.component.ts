@@ -7,7 +7,7 @@ import {HeroDetailComponent} from './hero-detail.component';
     selector: 'my-app',
     template: `
         <h1>{{title}}</h1>
-        <h2>My Heroes</h2>
+        <h2>my heroes</h2>
         <ul class="heroes">
             <li *ngFor="#hero of heroes"
                 [class.selected]="hero === selectedHero"
