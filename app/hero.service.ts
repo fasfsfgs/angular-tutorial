@@ -1,16 +1,61 @@
-import {Injectable} from "angular2/core";
+import { Injectable } from '@angular/core';
+import { Http, Headers, Response } from '@angular/http';
+import { Observable } from 'rxjs';
 
-import {HEROES} from "./mock-heroes";
+import 'rxjs/add/operator/toPromise';
+
+import { Hero } from './Hero';
 
 @Injectable()
 export class HeroService {
-    getHeroes() {
-        return Promise.resolve(HEROES);
-    }
+  private heroesUrl = 'app/heroes';
+  private headers = new Headers({'Content-Type': 'application/json'});
 
-    getHero(id:Number) {
-        return Promise.resolve(HEROES).then(
-            heroes => heroes.filter(hero => hero.id === id)[0]
-        );
-    }
+  constructor(private http: Http) { }
+
+  getHeroes(): Promise<Hero[]> {
+    return this.http.get(this.heroesUrl)
+                    .toPromise()
+                    .then(resp => resp.json().data as Hero[])
+                    .catch(this.handleError);
+  }
+
+  getHero(id: number): Promise<Hero> {
+    return this.getHeroes().then(heroes => heroes.find(hero => hero.id === id));
+  }
+
+  search(term: string): Observable<Hero[]> {
+    return this.http.get(`${this.heroesUrl}/?name=${term}`)
+      .map((r: Response) => r.json().data as Hero[]);
+  }
+
+  update(hero: Hero): Promise<Hero> {
+    const url = `${this.heroesUrl}/${hero.id}`;
+    return this.http
+      .put(url, JSON.stringify(hero), {headers: this.headers})
+      .toPromise()
+      .then(() => hero)
+      .catch(this.handleError);
+  }
+
+  create(name: string): Promise<Hero> {
+    return this.http
+      .post(this.heroesUrl, JSON.stringify({name: name}), {headers: this.headers})
+      .toPromise()
+      .then(res => res.json().data)
+      .catch(this.handleError);
+  }
+
+  delete(id: number): Promise<void> {
+    const url = `${this.heroesUrl}/${id}`;
+    return this.http.delete(url, {headers: this.headers})
+      .toPromise()
+      .then(() => null)
+      .catch(this.handleError);
+  }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error); // for demo purposes only
+    return Promise.reject(error.message || error);
+  }
 }
