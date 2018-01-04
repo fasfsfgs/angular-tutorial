@@ -1,3 +1,3 @@
-# angular2-hello-world
+# angular-tutorial
 
 following steps available @ [angular.io](https://angular.io)
